@@ -18,14 +18,14 @@ bitcoin = { package = "satsnet", version = "0.32.11", optional = true }
 redb = { version = "1.0", optional = true }
 hashbrown = { version = "0.14", optional = true }
 prometheus = { version = "0.13.4", optional = true }
+alloc = { version = "1.0.0", package = "rustc-std-workspace-alloc", optional = true }
 
 [features]
-default = []
 bitcoin_hashes = ["dep:bitcoin_hashes"]
 sha2 = ["dep:sha2"]
 redb = ["dep:redb"]
 bitcoin = ["dep:bitcoin", "bitcoin_hashes"]
-bitcoin_with_satsnet = ["bitcoin", "bitcoin/satsnet"]
+bitcoin_with_satsnet = ["alloc", "bitcoin", "bitcoin/satsnet"]
 slice_cache = ["dep:hashbrown"]
 prometheus = ["dep:prometheus", "slice_cache"]
 

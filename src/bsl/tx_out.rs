@@ -1,7 +1,6 @@
 use crate::bsl::Script;
 use crate::number::U64;
 use crate::{Parse, ParseResult, SResult};
-
 /// Contains a single transaction output
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TxOut<'a> {
@@ -82,10 +81,31 @@ impl<'o> redb::RedbValue for TxOut<'o> {
 #[cfg(feature = "bitcoin")]
 impl<'a> Into<bitcoin::TxOut> for &TxOut<'a> {
     fn into(self) -> bitcoin::TxOut {
-        bitcoin::TxOut {
-            value: bitcoin::Amount::from_sat(self.value()),
-            script_pubkey: self.script_pubkey().to_vec().into(),
+        let value = bitcoin::Amount::from_sat(self.value());
+        let script_pubkey = self.script_pubkey().to_vec().into();
+        
+        #[cfg(all(feature = "bitcoin_with_satsnet", feature = "alloc"))]
+        {
+            use alloc::vec::Vec;
+            let sats_ranges = Vec::new();
+            bitcoin::TxOut {
+                value,
+                script_pubkey,
+                sats_ranges: sats_ranges,
+            }
         }
+
+        #[cfg(not(all(feature = "bitcoin_with_satsnet", feature = "alloc")))]
+        {
+            bitcoin::TxOut {
+                value,
+                script_pubkey,
+            }
+        }
+        // bitcoin::TxOut {
+        //     value: bitcoin::Amount::from_sat(self.value()),
+        //     script_pubkey: self.script_pubkey().to_vec().into(),
+        // }
     }
 }
 
