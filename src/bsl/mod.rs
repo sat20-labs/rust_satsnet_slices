@@ -15,6 +15,12 @@ mod block_header;
 mod len;
 mod out_point;
 mod script;
+
+#[cfg(feature = "bitcoin_with_satsnet")]
+mod sats_range;
+#[cfg(feature = "bitcoin_with_satsnet")]
+mod sats_ranges;
+
 mod transaction;
 mod tx_in;
 mod tx_ins;
@@ -29,6 +35,12 @@ pub use len::parse_len;
 pub use len::Len;
 pub use out_point::OutPoint;
 pub use script::Script;
+
+#[cfg(feature = "bitcoin_with_satsnet")]
+pub use sats_range::SatsRange;
+#[cfg(feature = "bitcoin_with_satsnet")]
+pub use sats_ranges::SatsRanges;
+
 pub use transaction::Transaction;
 pub use tx_in::TxIn;
 pub use tx_ins::TxIns;
