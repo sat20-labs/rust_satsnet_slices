@@ -23,7 +23,7 @@ alloc = { version = "1.0.0", package = "rustc-std-workspace-alloc", optional = t
 # log = "0.4"
 
 [features]
-default = ["bitcoin_with_satsnet"]
+# default = ["bitcoin_with_satsnet"]
 bitcoin_hashes = ["dep:bitcoin_hashes"]
 sha2 = ["dep:sha2"]
 redb = ["dep:redb"]
