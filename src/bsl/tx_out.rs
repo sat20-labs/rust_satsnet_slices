@@ -1,6 +1,6 @@
 use crate::bsl::Script;
 #[cfg(feature = "bitcoin_with_satsnet")]
-use crate::bsl::SatsRanges;
+use crate::bsl::AssetInfos;
 use crate::number::U64;
 use crate::{Parse, ParseResult, SResult};
 /// Contains a single transaction output
@@ -9,21 +9,21 @@ pub struct TxOut<'a> {
     slice: &'a [u8],
     value: u64,
     #[cfg(feature = "bitcoin_with_satsnet")]
-    sats_ranges: SatsRanges<'a>,
+    sats_ranges: AssetInfos<'a>,
     script_pubkey: Script<'a>,
 }
 impl<'a> Parse<'a> for TxOut<'a> {
     #[cfg(feature = "bitcoin_with_satsnet")]
     fn parse(slice: &'a [u8]) -> SResult<Self> {
         let value = U64::parse(slice)?;
-        let sats_ranges = SatsRanges::parse(value.remaining())?;
-        let script = Script::parse(sats_ranges.remaining())?;
-        let consumed = value.consumed() + sats_ranges.consumed() + script.consumed();
+        let asset_infos = AssetInfos::parse(value.remaining())?;
+        let script = Script::parse(value.remaining())?;
+        let consumed = value.consumed() + value.consumed() + script.consumed();
         let remaining = script.remaining();
         let tx_out = TxOut {
             slice: &slice[..consumed],
             value: value.parsed_owned().into(),
-            sats_ranges: sats_ranges.parsed_owned(),
+            sats_ranges: asset_infos.parsed_owned(),
             script_pubkey: script.parsed_owned(),
         };
         Ok(ParseResult::new(remaining, tx_out))
@@ -106,12 +106,11 @@ impl<'a> Into<bitcoin::TxOut> for &TxOut<'a> {
         
         #[cfg(feature = "bitcoin_with_satsnet")]
         {
-            use alloc::vec::Vec;
-            let sats_ranges = Vec::new();
+            let assets = alloc::vec::Vec::new();
             bitcoin::TxOut {
                 value,
                 script_pubkey,
-                sats_ranges: sats_ranges,
+                assets,
             }
         }
 
@@ -140,7 +139,7 @@ impl<'a> Into<bitcoin::TxOut> for TxOut<'a> {
 mod test {
     use crate::{bsl::{Script, TxOut}, Parse, ParseResult};
     #[cfg(feature = "bitcoin_with_satsnet")]
-    use crate::bsl::SatsRanges;
+    use crate::bsl::AssetInfos;
     use hex_lit::hex;
 
     #[test]
@@ -151,7 +150,7 @@ mod test {
             slice: &tx_out_bytes[..],
             value: u64::MAX,
             #[cfg(feature = "bitcoin_with_satsnet")]
-            sats_ranges: SatsRanges::empty(),
+            sats_ranges: AssetInfos::empty(),
             script_pubkey: Script::parse(&hex!("0100")[..]).unwrap().parsed_owned(),
         };
         assert_eq!(

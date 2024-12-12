@@ -89,6 +89,7 @@ impl_number!(u16, U16, 2);
 impl_number!(u32, U32, 4);
 impl_number!(i32, I32, 4);
 impl_number!(u64, U64, 8);
+impl_number!(i64, I64, 8);
 
 impl U64 {
     /// Convert to `Len`

@@ -15,7 +15,7 @@ license = "MIT"
 bitcoin_hashes = { version = "0.14", optional = true }
 sha2 = { version = "0.10", optional = true }
 # bitcoin = { package = "satsnet", path = "/Users/chenwenjie/test/rust/rust-satsnet/satsnet", version = "0.32.13", optional = true }
-bitcoin = { package = "satsnet", version = "0.32.13", optional = true }
+bitcoin = { package = "satsnet", version = "=0.32.14", optional = true }
 redb = { version = "1.0", optional = true }
 hashbrown = { version = "0.14", optional = true }
 prometheus = { version = "0.13.4", optional = true }
@@ -23,6 +23,7 @@ alloc = { version = "1.0.0", package = "rustc-std-workspace-alloc", optional = t
 # log = "0.4"
 
 [features]
+default = ["bitcoin_with_satsnet"]
 bitcoin_hashes = ["dep:bitcoin_hashes"]
 sha2 = ["dep:sha2"]
 redb = ["dep:redb"]
@@ -34,7 +35,7 @@ prometheus = ["dep:prometheus", "slice_cache"]
 [dev-dependencies]
 hex_lit = { version = "0.1", features = ["rust_v_1_46"] }
 # bitcoin = { package = "satsnet", path = "/Users/chenwenjie/test/rust/rust-satsnet/satsnet", version = "0.32.13", features = ["rand"] }
-bitcoin = { package = "satsnet", version = "0.32.13", features = ["rand"]  }
+bitcoin = { package = "satsnet", version = "=0.32.14", features = ["rand"]  }
 bitcoin-test-data = "0.2.0"
 tempfile = "3.4.0"
 criterion = "0.3"

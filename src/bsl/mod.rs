@@ -15,11 +15,14 @@ mod block_header;
 mod len;
 mod out_point;
 mod script;
+mod var_string;
 
 #[cfg(feature = "bitcoin_with_satsnet")]
-mod sats_range;
+mod asset_name;
 #[cfg(feature = "bitcoin_with_satsnet")]
-mod sats_ranges;
+mod asset_info;
+#[cfg(feature = "bitcoin_with_satsnet")]
+mod asset_infos;
 
 mod transaction;
 mod tx_in;
@@ -35,11 +38,14 @@ pub use len::parse_len;
 pub use len::Len;
 pub use out_point::OutPoint;
 pub use script::Script;
+pub use var_string::VarString;
 
 #[cfg(feature = "bitcoin_with_satsnet")]
-pub use sats_range::SatsRange;
+pub use asset_name::AssetName;
 #[cfg(feature = "bitcoin_with_satsnet")]
-pub use sats_ranges::SatsRanges;
+pub use asset_info::AssetInfo;
+#[cfg(feature = "bitcoin_with_satsnet")]
+pub use asset_infos::AssetInfos;
 
 pub use transaction::Transaction;
 pub use tx_in::TxIn;

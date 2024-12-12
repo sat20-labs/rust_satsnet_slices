@@ -41,6 +41,12 @@ pub use redb;
 #[cfg(feature = "bitcoin")]
 pub use bitcoin;
 
+#[cfg(feature = "alloc")]
+extern crate alloc;
+
+#[cfg(feature = "alloc")]
+pub use alloc::string::String;
+
 #[cfg(test)]
 pub mod test_common {
     use hex_lit::hex;
