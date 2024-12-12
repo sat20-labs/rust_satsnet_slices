@@ -1,5 +1,7 @@
 use crate::{slice::read_slice, Parse, ParseResult, SResult};
 use super::len::{parse_len, Len};
+
+#[cfg(feature = "alloc")]
 use alloc::string::String;
 
 /// Contains a parsed string
@@ -27,6 +29,8 @@ impl<'a> Parse<'a> for VarString<'a> {
         ))
     }
 }
+
+#[cfg(feature = "alloc")]
 impl<'a> VarString<'a> {
     /// Returns the string parsed
     pub fn string(&self) -> String {
