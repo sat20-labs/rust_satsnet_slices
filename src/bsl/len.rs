@@ -28,6 +28,21 @@ pub fn parse_len(slice: &[u8]) -> Result<Len, Error> {
     })
 }
 
+pub struct VarInt<'a> {
+    pub(crate) remaining: &'a [u8],
+    pub(crate) consumed: usize,
+    pub(crate) n: u64,
+}
+
+pub fn parse_var_int(slice: &[u8]) -> Result<VarInt, Error> {
+    let len = parse_len(slice)?;
+    Ok(VarInt {
+        remaining: &slice[len.consumed..],
+        consumed: len.consumed,
+        n: len.n,
+    })
+}
+
 impl Len {
     /// The value encoded in this compact int
     pub fn n(&self) -> u64 {

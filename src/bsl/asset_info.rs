@@ -1,8 +1,11 @@
 use crate::{
     bsl::AssetName,
-    number::{U16,I64},
     Parse, ParseResult, SResult,
 };
+
+use super::len::{parse_var_int, VarInt};
+
+// use log::{error, warn, info, debug, trace};
 
 /// Contains AssetInfo in an output
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -16,16 +19,17 @@ pub struct AssetInfo<'a> {
 impl<'a> Parse<'a> for AssetInfo<'a> {
     fn parse(slice: &'a [u8]) -> SResult<Self> {
         let name = AssetName::parse(slice)?;
-        let amount = I64::parse(name.remaining())?;
-        let binding_sat = U16::parse(amount.remaining())?;
-        let consumed = name.consumed() + amount.consumed() + binding_sat.consumed();
+        let var_int_amount: VarInt<'_> = parse_var_int(name.remaining())?;
+        let var_int_binding_sat = parse_var_int(var_int_amount.remaining)?;
+        let consumed = name.consumed() + var_int_amount.consumed + var_int_binding_sat.consumed;
+        let remaining = &slice[consumed..];
         let asset_info = AssetInfo {
             slice: &slice[..consumed],
             name: name.parsed_owned(),
-            amount: amount.parsed_owned().into(),
-            binding_sat: binding_sat.parsed().into(),
+            amount: var_int_amount.n as i64,
+            binding_sat: var_int_binding_sat.n as u16,
         };
-        Ok(ParseResult::new(binding_sat.remaining(), asset_info))
+        Ok(ParseResult::new(remaining, asset_info))
     }
 }
 impl<'a> AssetInfo<'a> {
