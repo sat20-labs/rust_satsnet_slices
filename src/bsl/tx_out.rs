@@ -9,7 +9,7 @@ pub struct TxOut<'a> {
     slice: &'a [u8],
     value: u64,
     #[cfg(feature = "bitcoin_with_satsnet")]
-    sats_ranges: AssetInfos<'a>,
+    asset_infos: AssetInfos<'a>,
     script_pubkey: Script<'a>,
 }
 impl<'a> Parse<'a> for TxOut<'a> {
@@ -17,13 +17,13 @@ impl<'a> Parse<'a> for TxOut<'a> {
     fn parse(slice: &'a [u8]) -> SResult<Self> {
         let value = U64::parse(slice)?;
         let asset_infos = AssetInfos::parse(value.remaining())?;
-        let script = Script::parse(value.remaining())?;
-        let consumed = value.consumed() + value.consumed() + script.consumed();
+        let script = Script::parse(asset_infos.remaining())?;
+        let consumed = value.consumed() + asset_infos.consumed() + script.consumed();
         let remaining = script.remaining();
         let tx_out = TxOut {
             slice: &slice[..consumed],
             value: value.parsed_owned().into(),
-            sats_ranges: asset_infos.parsed_owned(),
+            asset_infos: asset_infos.parsed_owned(),
             script_pubkey: script.parsed_owned(),
         };
         Ok(ParseResult::new(remaining, tx_out))
@@ -150,7 +150,7 @@ mod test {
             slice: &tx_out_bytes[..],
             value: u64::MAX,
             #[cfg(feature = "bitcoin_with_satsnet")]
-            sats_ranges: AssetInfos::empty(),
+            asset_infos: AssetInfos::empty(),
             script_pubkey: Script::parse(&hex!("0100")[..]).unwrap().parsed_owned(),
         };
         assert_eq!(
