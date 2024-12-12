@@ -51,45 +51,45 @@ impl<'a> AssetInfos<'a> {
     /// If possible is better to use [`Visitor::visit_tx_out`] to avoid double pass, however, it may
     /// be conveniet to iterate in case you already have validated the slice, for example some data
     /// in a db.
-    pub fn iter(&self) -> TxOutIterator<'_> {
+    pub fn iter(&self) -> AssertInfosIterator<'_> {
         let len = parse_len(self.slice).expect("len granted by parsing");
-        TxOutIterator {
+        AssertInfosIterator {
             elements: len.n() as usize,
             offset: len.consumed(),
-            tx_outs: self,
+            asset_infos: self,
         }
     }
 }
 
 impl<'a> IntoIterator for &'a AssetInfos<'a> {
     type Item = AssetInfo<'a>;
-    type IntoIter = TxOutIterator<'a>;
+    type IntoIter = AssertInfosIterator<'a>;
 
     /// Returns an iterator over [`AssetInfo`]
     ///
     /// If possible is better to use [`Visitor::visit_tx_out`] to avoid double pass, however, it may
     /// be conveniet to iterate in case you already have validated the slice, for example some data
     /// in a db.
-    fn into_iter(self) -> TxOutIterator<'a> {
+    fn into_iter(self) -> AssertInfosIterator<'a> {
         self.iter()
     }
 }
 
-pub struct TxOutIterator<'a> {
+pub struct AssertInfosIterator<'a> {
     elements: usize,
     offset: usize,
-    tx_outs: &'a AssetInfos<'a>,
+    asset_infos: &'a AssetInfos<'a>,
 }
 
-impl<'a> Iterator for TxOutIterator<'a> {
+impl<'a> Iterator for AssertInfosIterator<'a> {
     type Item = AssetInfo<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.offset >= self.tx_outs.as_ref().len() {
+        if self.offset >= self.asset_infos.as_ref().len() {
             None
         } else {
             let tx_out =
-            AssetInfo::parse(&self.tx_outs.slice[self.offset..]).expect("granted from parsing");
+            AssetInfo::parse(&self.asset_infos.slice[self.offset..]).expect("granted from parsing");
             self.offset += tx_out.consumed();
             Some(tx_out.parsed_owned())
         }
@@ -100,7 +100,7 @@ impl<'a> Iterator for TxOutIterator<'a> {
     }
 }
 
-impl<'a> ExactSizeIterator for TxOutIterator<'a> {}
+impl<'a> ExactSizeIterator for AssertInfosIterator<'a> {}
 
 impl<'a> AsRef<[u8]> for AssetInfos<'a> {
     fn as_ref(&self) -> &[u8] {
