@@ -13,7 +13,7 @@ pub struct AssetInfo<'a> {
     slice: &'a [u8],
     name: AssetName<'a>,
     amount: i64,
-    binding_sat: u16,
+    binding_sat: u32,
 }
 
 impl<'a> Parse<'a> for AssetInfo<'a> {
