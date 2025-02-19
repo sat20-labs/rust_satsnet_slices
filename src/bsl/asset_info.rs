@@ -27,7 +27,7 @@ impl<'a> Parse<'a> for AssetInfo<'a> {
             slice: &slice[..consumed],
             name: name.parsed_owned(),
             amount: var_int_amount.n as i64,
-            binding_sat: var_int_binding_sat.n as u16,
+            binding_sat: var_int_binding_sat.n as u32,
         };
         Ok(ParseResult::new(remaining, asset_info))
     }
@@ -42,7 +42,7 @@ impl<'a> AssetInfo<'a> {
         self.amount
     }
     /// Returns the binding_sat
-    pub fn binding_sat(&self) -> u16 {
+    pub fn binding_sat(&self) -> u32 {
         self.binding_sat
     }
 }
