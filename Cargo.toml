@@ -1,6 +1,6 @@
 [package]
 name = "satsnet_slices"
-version = "0.9.12"
+version = "0.9.13"
 edition = "2021"
 authors = ["Jacky Chen <softwarecheng@gmail.com>"]
 description = "Parse Bitcoin objects without allocations"
