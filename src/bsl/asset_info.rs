@@ -1,5 +1,6 @@
+use alloc::string::String;
 use crate::{
-    bsl::AssetName,
+    bsl::{AssetName, VarString},
     Parse, ParseResult, SResult,
 };
 
@@ -12,21 +13,21 @@ use super::len::{parse_var_int, VarInt};
 pub struct AssetInfo<'a> {
     slice: &'a [u8],
     name: AssetName<'a>,
-    amount: i64,
+    amount: VarString<'a>,
     binding_sat: u32,
 }
 
 impl<'a> Parse<'a> for AssetInfo<'a> {
     fn parse(slice: &'a [u8]) -> SResult<Self> {
         let name = AssetName::parse(slice)?;
-        let var_int_amount: VarInt<'_> = parse_var_int(name.remaining())?;
-        let var_int_binding_sat = parse_var_int(var_int_amount.remaining)?;
-        let consumed = name.consumed() + var_int_amount.consumed + var_int_binding_sat.consumed;
+        let amount = VarString::parse(name.remaining())?;
+        let var_int_binding_sat = parse_var_int(amount.remaining())?;
+        let consumed = name.consumed() + amount.consumed() + var_int_binding_sat.consumed;
         let remaining = &slice[consumed..];
         let asset_info = AssetInfo {
             slice: &slice[..consumed],
             name: name.parsed_owned(),
-            amount: var_int_amount.n as i64,
+            amount: amount.parsed_owned(),
             binding_sat: var_int_binding_sat.n as u32,
         };
         Ok(ParseResult::new(remaining, asset_info))
@@ -38,8 +39,8 @@ impl<'a> AssetInfo<'a> {
         &self.name
     }
     /// Return the amount
-    pub fn amount(&self) -> i64 {
-        self.amount
+    pub fn amount(&self) -> String {
+        self.amount.string()
     }
     /// Returns the binding_sat
     pub fn binding_sat(&self) -> u32 {
@@ -58,7 +59,7 @@ impl<'a> Into<bitcoin::blockdata::transaction::AssetInfo> for &AssetInfo<'a> {
     fn into(self) -> bitcoin::blockdata::transaction::AssetInfo {
         bitcoin::blockdata::transaction::AssetInfo {
             name: (&self.name).into(),
-            amount: self.amount,
+            amount: self.amount.string(),
             binding_sat: self.binding_sat,
         }
     }
