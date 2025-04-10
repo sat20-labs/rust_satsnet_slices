@@ -1,6 +1,6 @@
 [package]
 name = "satsnet_slices"
-version = "0.9.14"
+version = "0.9.15"
 edition = "2021"
 authors = ["Jacky Chen <softwarecheng@gmail.com>"]
 description = "Parse Bitcoin objects without allocations"
@@ -34,8 +34,8 @@ prometheus = ["dep:prometheus", "slice_cache"]
 
 [dev-dependencies]
 hex_lit = { version = "0.1", features = ["rust_v_1_46"] }
-bitcoin = { package = "satsnet", path = "/Users/chenwenjie/test/rust/rust-satsnet/satsnet", version = "0.32.16", features = ["rand"] }
-# bitcoin = { package = "satsnet", version = "=0.32.16", features = ["rand"]  }
+# bitcoin = { package = "satsnet", path = "/Users/chenwenjie/test/rust/rust-satsnet/satsnet", version = "0.32.16", features = ["rand"] }
+bitcoin = { package = "satsnet", version = "=0.32.16", features = ["rand"]  }
 bitcoin-test-data = "0.2.0"
 tempfile = "3.4.0"
 criterion = "0.3"
